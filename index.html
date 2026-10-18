@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Milkshake do Biel - Painel de Vendas</title>
+    <style>
+        :root {
+            --primary: #ff4757;
+            --primary-hover: #ff6b81;
+            --secondary: #2ed573;
+            --accent: #ffa502;
+            --bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --text: #2f3542;
+            --border: #e4e7eb;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 20px;
+        }
+
+        /* Cabeçalho da Marca */
+        header {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+            border: 1px solid var(--border);
+            max-width: 1200px;
+            margin: 0 auto 25px auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header h1 {
+            color: var(--primary);
+            font-size: 2.4rem;
+            margin-bottom: 5px;
+        }
+
+        .insta-tag {
+            display: inline-block;
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-decoration: none;
+        }
+
+        .info-header {
+            color: #747d8c;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        /* Container do iFrame do Mapa */
+        .map-container {
+            width: 100%;
+            max-width: 800px;
+            height: 200px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            margin-top: 10px;
+        }
+
+        .map-container iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        /* Dashboard de Métricas */
+        .dashboard {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .metric-card {
+            background: var(--card-bg);
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.03);
+            border: 1px solid var(--border);
+            text-align: center;
+            min-width: 200px;
+        }
+
+        .metric-card h3 {
+            font-size: 0.85rem;
+            color: #747d8c;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-card p {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: var(--text);
+            margin-top: 5px;
+        }
+
+        /* Títulos de Seção */
+        .section-title {
+            max-width: 1200px;
+            margin: 0 auto 15px auto;
+            font-size: 1.4rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Grid de Produtos */
+        .produtos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto 35px auto;
+        }
+
+        .product-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.08);
+        }
+
+        .product-emoji {
+            font-size: 3.5rem;
+            margin-bottom: 8px;
+        }
+
+        .product-card h2 {
+            font-size: 1.25rem;
+            margin-bottom: 4px;
+            text-align: center;
+        }
+
+        .product-desc {
+            font-size: 0.85rem;
+            color: #747d8c;
+            text-align: center;
+            margin-bottom: 12px;
+            min-height: 38px;
+        }
+
+        /* Seletor de Tamanho */
+        .size-selector {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+            margin-bottom: 12px;
+        }
+
+        .size-btn {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid var(--border);
+            background: #f1f2f6;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #57606f;
+            transition: all 0.2s;
+        }
+
+        .size-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .product-price {
+            font-size: 1.3rem;
+            color: var(--primary);
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .product-stock {
+            font-size: 0.85rem;
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: #eccc68;
+            color: #fff;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .product-stock.esgotado {
+            background: var(--primary);
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+        }
+
+        button.btn-vender, button.btn-repor {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-vender {
+            flex: 2;
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-vender:hover {
+            background: #26af5f;
+        }
+
+        .btn-vender:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .btn-repor {
+            flex: 1;
+            background: #f1f2f6;
+            color: #57606f;
+        }
+
+        .btn-repor:hover {
+            background: #dfe4ea;
+        }
+
+        .review-section {
+            width: 100%;
+            margin-top: 15px;
+            border-top: 1px solid var(--border);
+            padding-top: 10px;
+            text-align: center;
+        }
+
+        .stars {
+            color: var(--accent);
+            font-size: 0.9rem;
+        }
+
+        /* Seção de Adicionais Separada */
+        .adicionais-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            max-width: 1200px;
+            margin: 0 auto 35px auto;
+        }
+
+        .adicional-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+
+        .adicional-info h3 {
+            font-size: 1rem;
+            color: var(--text);
+        }
+
+        .adicional-info p {
+            font-size: 0.9rem;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .btn-add {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-add:hover {
+            background: #e09200;
+        }
+
+        /* Histórico de Vendas */
+        .log-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .log-container h2 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        .log-list {
+            list-style: none;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .log-item {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.88rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .log-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Cabeçalho com iFrame de Localização -->
+    <header>
+        <h1>🥤 Milkshake do Biel</h1>
+        <a href="https://instagram.com/milkshake.dobiel" target="_blank" class="insta-tag">@milkshake.dobiel</a>
+        <p class="info-header">📍 R. Jandir Domingues Bazei, 469 - Santa Clara 4, Toledo - PR | 📞 (45) 99823-4411</p>
+        
+        <!-- iFrame Google Maps para Santa Clara 4, Toledo - PR -->
+        <div class="map-container">
+            <iframe 
+                src="https://maps.google.com/maps?q=R.%20Jandir%20Domingues%20Bazei%2C%20469%20-%20Santa%20Clara%204%2C%20Toledo%20-%20PR&z=18&output=embed" 
+                allowfullscreen="" 
+                loading="lazy" 
+                referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+        </div>
+    </header>
+
+    <!-- Dashboard Financeiro -->
+    <section class="dashboard">
+        <div class="metric-card">
+            <h3>Faturamento Total</h3>
+            <p id="total-faturamento">R$ 0,00</p>
+        </div>
+        <div class="metric-card">
+            <h3>Vendas Realizadas</h3>
+            <p id="total-vendas">0</p>
+        </div>
+    </section>
+
+    <!-- Seção de Sabores -->
+    <h2 class="section-title">🥤 Cardápio de Milkshakes</h2>
+    <main class="produtos-grid" id="container-produtos">
+        <!-- Inserido dinamicamente via JS -->
+    </main>
+
+    <!-- Seção Separada de Adicionais -->
+    <h2 class="section-title">➕ Adicionais & Opcionais</h2>
+    <section class="adicionais-grid" id="container-adicionais">
+        <!-- Inserido dinamicamente via JS -->
+    </section>
+
+    <!-- Histórico de Atividades -->
+    <section class="log-container">
+        <h2>📜 Histórico de Vendas</h2>
+        <ul class="log-list" id="log-list">
+            <li class="log-item" style="color: #a4b0be;">Nenhuma venda realizada ainda.</li>
+        </ul>
+    </section>
+
+    <script>
+        let faturamentoTotal = 0;
+        let vendasTotais = 0;
+
+        // Classe do Produto Principal
+        class Milkshake {
+            constructor(id, nome, descricao, precoPequeno, precoGrande, estoque, emoji, avaliacao) {
+                this.id = id;
+                this.nome = nome;
+                this.descricao = descricao;
+                this.precos = {
+                    Pequeno: precoPequeno,
+                    Grande: precoGrande
+                };
+                this.tamanhoSelecionado = 'Pequeno';
+                this.estoque = estoque;
+                this.emoji = emoji;
+                this.avaliacao = avaliacao;
+            }
+
+            get precoAtual() {
+                return this.precos[this.tamanhoSelecionado];
+            }
+
+            selecionarTamanho(tamanho) {
+                this.tamanhoSelecionado = tamanho;
+                const priceElement = document.getElementById(`price-${this.id}`);
+                priceElement.textContent = `R$ ${this.precoAtual.toFixed(2)}`;
+
+                const btnP = document.getElementById(`btn-p-${this.id}`);
+                const btnG = document.getElementById(`btn-g-${this.id}`);
+
+                if (tamanho === 'Pequeno') {
+                    btnP.classList.add('active');
+                    btnG.classList.remove('active');
+                } else {
+                    btnG.classList.add('active');
+                    btnP.classList.remove('active');
+                }
+            }
+
+            vender() {
+                if (this.estoque > 0) {
+                    this.estoque--;
+                    const valorVenda = this.precoAtual;
+                    faturamentoTotal += valorVenda;
+                    vendasTotais++;
+
+                    registrarLog(`Vendido: ${this.nome} (${this.tamanhoSelecionado} 300/500ml) - R$ ${valorVenda.toFixed(2)}`);
+                    atualizarDashboard();
+                    this.atualizarCard();
+                }
+            }
+
+            repor(quantidade = 5) {
+                this.estoque += quantidade;
+                registrarLog(`Estoque reposto: +${quantidade} un. de ${this.nome}`);
+                this.atualizarCard();
+            }
+
+            atualizarCard() {
+                const stockElement = document.getElementById(`stock-${this.id}`);
+                const btnVender = document.getElementById(`btn-vender-${this.id}`);
+
+                stockElement.textContent = `Estoque: ${this.estoque} un`;
+
+                if (this.estoque === 0) {
+                    stockElement.textContent = "ESGOTADO";
+                    stockElement.classList.add("esgotado");
+                    btnVender.disabled = true;
+                } else {
+                    stockElement.classList.remove("esgotado");
+                    btnVender.disabled = false;
+                }
+            }
+        }
+
+        // Catálogo de Produtos
+        const produtos = [
+            new Milkshake(1, "Ovomaltine Crocante", "Sorvete de baunilha, calda de chocolate e bastante Ovomaltine.", 12.00, 18.00, 8, "🍫", "★★★★★"),
+            new Milkshake(2, "Morango do Biel", "Sorvete de morango, geleia caseira em pedaços e chantilly.", 12.00, 18.00, 6, "🍓", "★★★★☆"),
+            new Milkshake(3, "Chocolate Nutellado", "Sorvete de chocolate com borda generosa de Nutella pura.", 12.00, 18.00, 5, "🥤", "★★★★★"),
+            new Milkshake(4, "Ninho com Laka", "Sorvete de creme, Leite Ninho em pó e raspas de Laka.", 12.00, 18.00, 7, "🍦", "★★★★☆"),
+            new Milkshake(5, "Paçoca Tradicional", "Sorvete de baunilha, amendoim triturado e doce de leite.", 12.00, 18.00, 4, "🥜", "★★★☆☆")
+        ];
+
+        // Lista de Adicionais Separada
+        const adicionais = [
+            { nome: "Chantilly Extra", preco: 3.00 },
+            { nome: "Calda Extra (Nutella / Doce de Leite)", preco: 3.50 },
+            { nome: "Extra Granulado / Bis / M&Ms", preco: 2.50 },
+            { nome: "Paçoca Extra Triturada", preco: 2.00 }
+        ];
+
+        function renderizarProdutos() {
+            const container = document.getElementById("container-produtos");
+            container.innerHTML = "";
+
+            produtos.forEach((p, idx) => {
+                const card = document.createElement("div");
+                card.className = "product-card";
+                card.innerHTML = `
+                    <div class="product-emoji">${p.emoji}</div>
+                    <h2>${p.nome}</h2>
+                    <p class="product-desc">${p.descricao}</p>
+
+                    <div class="size-selector">
+                        <button id="btn-p-${p.id}" class="size-btn active" onclick="produtos[${idx}].selecionarTamanho('Pequeno')">Pequeno (300ml)</button>
+                        <button id="btn-g-${p.id}" class="size-btn" onclick="produtos[${idx}].selecionarTamanho('Grande')">Grande (500ml)</button>
+                    </div>
+
+                    <div class="product-price" id="price-${p.id}">R$ ${p.precoAtual.toFixed(2)}</div>
+                    <div class="product-stock" id="stock-${p.id}">Estoque: ${p.estoque} un</div>
+                    
+                    <div class="actions">
+                        <button class="btn-vender" id="btn-vender-${p.id}" onclick="produtos[${idx}].vender()">Vender</button>
+                        <button class="btn-repor" onclick="produtos[${idx}].repor()">+ Repor</button>
+                    </div>
+
+                    <div class="review-section">
+                        <div class="stars">${p.avaliacao}</div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderizarAdicionais() {
+            const container = document.getElementById("container-adicionais");
+            container.innerHTML = "";
+
+            adicionais.forEach((item, idx) => {
+                const card = document.createElement("div");
+                card.className = "adicional-card";
+                card.innerHTML = `
+                    <div class="adicional-info">
+                        <h3>${item.nome}</h3>
+                        <p>R$ ${item.preco.toFixed(2)}</p>
+                    </div>
+                    <button class="btn-add" onclick="venderAdicional(${idx})">+ Vender</button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function venderAdicional(idx) {
+            const item = adicionais[idx];
+            faturamentoTotal += item.preco;
+            vendasTotais++;
+            registrarLog(`Adicional vendido: ${item.nome} - R$ ${item.preco.toFixed(2)}`);
+            atualizarDashboard();
+        }
+
+        function atualizarDashboard() {
+            document.getElementById("total-faturamento").textContent = `R$ ${faturamentoTotal.toFixed(2)}`;
+            document.getElementById("total-vendas").textContent = vendasTotais;
+        }
+
+        function registrarLog(mensagem) {
+            const logList = document.getElementById("log-list");
+            
+            if (vendasTotais === 1 && logList.children[0].style.color) {
+                logList.innerHTML = "";
+            }
+
+            const agora = new Date();
+            const horaFormatada = agora.toLocaleTimeString();
+
+            const li = document.createElement("li");
+            li.className = "log-item";
+            li.innerHTML = `<span>${mensagem}</span> <span style="color: #a4b0be;">${horaFormatada}</span>`;
+
+            logList.insertBefore(li, logList.firstChild);
+        }
+
+        // Inicialização
+        renderizarProdutos();
+        renderizarAdicionais();
+    </script>
+</body>
+</html>
